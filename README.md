@@ -50,5 +50,5 @@ header2=#88c0d0
 header3=#88c0d0
 preformatted=#ebcb8b
 quoted=#a3be8c
-link=#5e81a
+link=#5e81ac
 ```
