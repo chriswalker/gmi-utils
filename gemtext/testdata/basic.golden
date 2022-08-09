@@ -1,0 +1,25 @@
+  [38;2;0;255;255m# Sample header[39m
+  
+  A long line of text that
+  should get split up
+  properly by the formatter
+  correctly. It is required
+  that clients ndle line
+  breaks and pagination
+  correctly, and that raw
+  gemtext files do not
+  contain artificial line
+  splits.
+  
+  This is another line.
+  
+  [38;2;255;0;255m> This is a quote[39m
+  
+  [38;2;0;255;255m## Sample subheader[39m
+  
+  * Bullet item 1
+  * Bullet item 2
+  
+  [38;2;255;255;0m### Three-level subheader[39m
+  
+  [38;2;0;255;0mLink gemini://some.url/ [Gemini][39m

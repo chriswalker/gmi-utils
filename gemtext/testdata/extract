@@ -1,0 +1,15 @@
+# Extract Links test page
+
+This page contains a variety of links that should be extracted properly by the ExtractLinks function.
+
+=> gemini://some.url/fragment                      textual name
+=> gemini://some.other/url closer text
+
+```
+=> gemini://url/in/preformtted.text              This URL should be ignored
+```
+
+Text breaking up the URLs.
+
+=> gemini://url/with/no/text/
+=> /relative/url          a relative URL

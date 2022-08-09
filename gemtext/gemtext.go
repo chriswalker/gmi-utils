@@ -218,7 +218,7 @@ func wrap(width int, line string) []string {
 // parseLink parses the supplied URL line type into a formatted string.
 // A URL line type is defined in the Gemini spec as:
 //
-// =>[<whitespace>]<URL>[<whitespace><USER-FRIENDLY LINK NAME>]
+//   =>[<whitespace>]<URL>[<whitespace><USER-FRIENDLY LINK NAME>]
 //
 // where:
 //
@@ -247,4 +247,42 @@ func parseLink(line string) string {
 	}
 
 	return link
+}
+
+// ExtractLinks constructs a map of links and their link text from
+// the provided io.Reader.
+func ExtractLinks(r io.Reader) map[string]string {
+	links := make(map[string]string)
+
+	cutSet := " \t"
+	preformatted := false
+
+	s := bufio.NewScanner(r)
+	for s.Scan() {
+		line := s.Text()
+		if strings.HasPrefix(line, preformattedToggle.prefix) {
+			preformatted = !preformatted
+			continue
+		}
+		if preformatted {
+			continue
+		}
+		if strings.HasPrefix(line, link.prefix) {
+			// strip any prefixes
+			line = line[len(link.prefix):]
+			// Strip any trailing stuff left of the cutset
+			line = strings.TrimLeft(line, cutSet)
+
+			// Get index between URL and link name
+			idx := strings.IndexAny(line, cutSet)
+			if idx > 0 {
+				links[strings.Trim(line[:idx], cutSet)] = strings.Trim(line[idx:], cutSet)
+			} else {
+				// No link name specified, just a URL
+				links[strings.Trim(line, cutSet)] = ""
+			}
+		}
+	}
+
+	return links
 }
