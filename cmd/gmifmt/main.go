@@ -8,7 +8,7 @@ import (
 
 	"github.com/chriswalker/gmi-utils/config"
 	"github.com/chriswalker/gmi-utils/gemtext"
-	"golang.org/x/term"
+	"github.com/chriswalker/gmi-utils/terminal"
 )
 
 const usage = `
@@ -49,7 +49,7 @@ func main() {
 	flag.Parse()
 
 	if help {
-		fmt.Print(usage)
+		flag.Usage()
 		os.Exit(1)
 	}
 
@@ -89,9 +89,6 @@ func main() {
 
 	fmt.Println()
 
-	// We use stderr to check terminal width, as stdin or stdout may
-	// be pipes, if gmifmt is in the middle of a sequence of piped
-	// commands (e.g. if output is getting piped into a pager)
-	termWidth, _, _ := term.GetSize(int(os.Stderr.Fd())) // TODO err
-	gemtext.Output(termWidth, margin, input, os.Stdout)
+	width := terminal.GetWidth()
+	gemtext.Output(width, margin, input, os.Stdout)
 }
