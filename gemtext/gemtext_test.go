@@ -262,6 +262,9 @@ func TestOutput(t *testing.T) {
 
 			golden := filepath.Join("testdata", testName+".golden")
 			f, err := os.OpenFile(golden, os.O_RDWR, 0644)
+			if err != nil {
+				t.Fatalf("error opening test golden file: %s", err)
+			}
 			defer f.Close()
 
 			want, err := io.ReadAll(f)

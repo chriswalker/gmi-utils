@@ -53,7 +53,7 @@ type Client struct {
 // Get attempts to get the supplied Gemini URL.
 func (c *Client) Get(geminiURL string) (*Response, error) {
 	// If scheme missing, default to gemini://
-	if strings.Index(geminiURL, "://") < 0 {
+	if !strings.Contains(geminiURL, "://") {
 		geminiURL = fmt.Sprintf("%s://%s", Scheme, geminiURL)
 	}
 
@@ -105,7 +105,10 @@ func (c *Client) get(url url.URL) (*Response, error) {
 	start := time.Now()
 
 	// Send request to server - composed of the URL plus CRLF
-	conn.Write([]byte(url.String() + "\r\n"))
+	_, err = conn.Write([]byte(url.String() + "\r\n"))
+	if err != nil {
+		return nil, fmt.Errorf("could not send request to server: %w", err)
+	}
 
 	// Process response
 	reader := bufio.NewReader(conn)
@@ -132,7 +135,7 @@ func (c *Client) get(url url.URL) (*Response, error) {
 
 		rsp.ContentLength = len(body)
 		rsp.Body = body
-		rsp.ResponseDuration = time.Now().Sub(start)
+		rsp.ResponseDuration = time.Since(start)
 	case StatusRedirectTemporary,
 		StatusRedirectPermanent:
 		url, err := url.Parse(rsp.Meta)
