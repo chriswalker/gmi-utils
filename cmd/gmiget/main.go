@@ -1,9 +1,12 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 
 	"github.com/chriswalker/gmi-utils/gemini"
 )
@@ -31,21 +34,19 @@ func main() {
 	flag.BoolVar(&statusOnly, "I", false, "Output response header only")
 	flag.Usage = func() {
 		fmt.Print(usage)
-		os.Exit(1)
 	}
 	flag.Parse()
 
 	if help {
-		fmt.Print(usage)
+		flag.Usage()
 		os.Exit(1)
 	}
 
-	args := flag.Args()
-	if len(args) != 1 {
-		fmt.Fprintln(os.Stderr, "gmiget: missing Gemini URL")
-		flag.Usage()
+	geminiURL, err := getURL(os.Stdin)
+	if err != nil {
+		fmt.Fprint(os.Stderr, err.Error())
+		os.Exit(1)
 	}
-	geminiURL := args[0]
 
 	resp, err := gemini.Get(geminiURL)
 	if err != nil {
@@ -58,4 +59,35 @@ func main() {
 		output = gemini.Status(resp.StatusCode)
 	}
 	fmt.Printf("%s\n", output)
+}
+
+// getURL gets a URL from either stdin (if being piped in) or from the
+// command line via args. It returns an error if a URL is not supplied.
+func getURL(in *os.File) (string, error) {
+	var url string
+
+	f, err := in.Stat()
+	if err != nil {
+		return "", nil
+	}
+
+	// URL must either be passed in via a pipe, or flag
+	if f.Mode()&os.ModeNamedPipe != 0 {
+		// Got something, read it
+		// TODO - this needs a little refactoring
+		b, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			return "", err
+		}
+		url = string(b)
+		url = strings.TrimRight(url, "\n")
+	} else {
+		args := flag.Args()
+		if len(args) != 1 {
+			return "", errors.New("gmiget: missing Gemini URL")
+		}
+		url = args[0]
+	}
+
+	return url, nil
 }
