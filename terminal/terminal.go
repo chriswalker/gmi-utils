@@ -17,7 +17,9 @@ func GetWidth() int {
 }
 
 // Below functions taken from fzf, which has a great way of determining
-// the terminal device, and falls back to stdin.
+// the terminal device, and falls back to stdin - see
+//
+// https://github.com/junegunn/fzf/blob/ef67a45702c01ff93e0ea99a51594c8160f66cc1/src/tui/ttyname_unix.go
 
 // getTTY returns terminal device to be used as stdin, falls back to os.Stdin
 func getTTY() *os.File {
