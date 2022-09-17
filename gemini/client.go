@@ -94,7 +94,7 @@ func (c *Client) getConn(url url.URL) (net.Conn, error) {
 	return c.dialer.Dial("tcp", hostStr)
 }
 
-// get makes the actual request over the supplied net.Conn.
+// get makes the actual request over the internal net.Conn.
 func (c *Client) get(url url.URL) (*Response, error) {
 	conn, err := c.getConn(url)
 	if err != nil {
