@@ -6,25 +6,19 @@ import (
 	"io"
 	"os"
 
+	"github.com/chriswalker/gmi-utils/cli"
 	"github.com/chriswalker/gmi-utils/config"
 	"github.com/chriswalker/gmi-utils/gemtext"
 	"github.com/chriswalker/gmi-utils/terminal"
 )
 
-const usage = `
-gmifmt - formats and colours Gemtext
+const (
+	desc  = "gmifmt - formats and colours Gemtext"
+	usage = `  gmifmt -f <file>,
 
-Usage:
-    gmifmt -f <file>, or pipe in via stdin:
-    gmiget gemini://some-url/ | gmifmt [options]
-
-Options:
-    -h, --help     Show help for gmifmt
-    -f, --file     Format gemtext from file
-    -c, --config   Read configuration from file
-    -m, --margin   Set margins for output
-
-`
+  # Pipe in gemtext via stdin
+  gmiget gemini://some-url/ | gmifmt [flags...]`
+)
 
 var (
 	help       bool
@@ -36,16 +30,17 @@ var (
 func main() {
 	flag.BoolVar(&help, "help", false, "Show help for gmifmt")
 	flag.BoolVar(&help, "h", false, "Show help for gmifmt")
-	flag.IntVar(&margin, "margin", 0, "width of margin to apply to formatted gemtext")
-	flag.IntVar(&margin, "m", 0, "width of margin to apply to formatted gemtext")
-	flag.StringVar(&inputFile, "file", "", "gemtext file to format")
-	flag.StringVar(&inputFile, "f", "", "gemtext file to format")
-	flag.StringVar(&configFile, "config", "", "path to gmifmt configuration file")
-	flag.StringVar(&configFile, "c", "", "path to gmifmt configuration file")
+	flag.IntVar(&margin, "margin", 0, "Width of margin to apply to formatted gemtext")
+	flag.IntVar(&margin, "m", 0, "Width of margin to apply to formatted gemtext")
+	flag.StringVar(&inputFile, "file", "", "Gemtext file to format")
+	flag.StringVar(&inputFile, "f", "", "Gemtext file to format")
+	flag.StringVar(&configFile, "config", "", "Path to gmifmt configuration file")
+	flag.StringVar(&configFile, "c", "", "Path to gmifmt configuration file")
 
-	flag.Usage = func() {
-		fmt.Print(usage)
-	}
+	flag.Usage = cli.Usage(cli.UsageOptions{
+		Description: desc,
+		Usage:       usage,
+	}, os.Stdout)
 	flag.Parse()
 
 	if help {

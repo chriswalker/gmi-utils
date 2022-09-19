@@ -1,0 +1,38 @@
+Test description of tool
+
+Usage:
+    a <flags>
+
+Flags:
+  -c, --config     path to config file to load
+  -test.bench      run only benchmarks matching `regexp`
+  -test.benchmem   print memory allocations for benchmarks (default: false)
+  -test.benchtime  run each benchmark for duration `d` (default: 1s)
+  -test.blockprofile  write a goroutine blocking profile to `file`
+  -test.blockprofilerate  set blocking profile `rate` (see runtime.SetBlockProfileRate) (default: 1)
+  -test.count      run tests and benchmarks `n` times (default: 1)
+  -test.coverprofile  write a coverage profile to `file`
+  -test.cpu        comma-separated `list` of cpu counts to run each test with
+  -test.cpuprofile  write a cpu profile to `file`
+  -test.failfast   do not start new tests after the first test failure (default: false)
+  -test.fuzz       run the fuzz test matching `regexp`
+  -test.fuzzcachedir  directory where interesting fuzzing inputs are stored (for use only by cmd/go)
+  -test.fuzzminimizetime  time to spend minimizing a value after finding a failing input (default: 1m0s)
+  -test.fuzztime   time to spend fuzzing; default is to run indefinitely (default: 0s)
+  -test.fuzzworker  coordinate with the parent process to fuzz random values (for use only by cmd/go) (default: false)
+  -test.list       list tests, examples, and benchmarks matching `regexp` then exit
+  -test.memprofile  write an allocation profile to `file`
+  -test.memprofilerate  set memory allocation profiling `rate` (see runtime.MemProfileRate) (default: 0)
+  -test.mutexprofile  write a mutex contention profile to the named file after execution
+  -test.mutexprofilefraction  if >= 0, calls runtime.SetMutexProfileFraction() (default: 1)
+  -test.outputdir  write profiles to `dir`
+  -test.paniconexit0  panic on call to os.Exit(0) (default: false)
+  -test.parallel   run at most `n` tests in parallel (default: 8)
+  -test.run        run only tests and examples matching `regexp`
+  -test.short      run smaller test suite to save time (default: false)
+  -test.shuffle    randomize the execution order of tests and benchmarks (default: off)
+  -test.testlogfile  write test action log to `file` (for use only by cmd/go)
+  -test.timeout    panic test binary after duration `d` (default 0, timeout disabled) (default: 0s)
+  -test.trace      write an execution trace to `file`
+  -test.v          verbose: print additional output (default: false)
+  -update          whether to regenerate .golden files (default: false)

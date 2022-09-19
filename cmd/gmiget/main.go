@@ -8,20 +8,14 @@ import (
 	"os"
 	"strings"
 
+	"github.com/chriswalker/gmi-utils/cli"
 	"github.com/chriswalker/gmi-utils/gemini"
 )
 
-const usage = `
-gmiget - gets Gemini pages
-
-Usage:
-    gmiget [flags...] <url>
-
-Options:
-    -h, --help     Show help for gmiget
-    -I             Print response status code only
-
-`
+const (
+	desc  = "gmiget - gets Gemini pages"
+	usage = `  gmiget [flags...] <url>`
+)
 
 var (
 	help       bool
@@ -32,9 +26,11 @@ func main() {
 	flag.BoolVar(&help, "help", false, "Show help for gmiget")
 	flag.BoolVar(&help, "h", false, "Show help for gmiget")
 	flag.BoolVar(&statusOnly, "I", false, "Output response header only")
-	flag.Usage = func() {
-		fmt.Print(usage)
-	}
+
+	flag.Usage = cli.Usage(cli.UsageOptions{
+		Description: desc,
+		Usage:       usage,
+	}, os.Stdout)
 	flag.Parse()
 
 	if help {

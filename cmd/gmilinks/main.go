@@ -6,23 +6,17 @@ import (
 	"io"
 	"os"
 
+	"github.com/chriswalker/gmi-utils/cli"
 	"github.com/chriswalker/gmi-utils/gemtext"
 )
 
 const (
 	name  = "gmilinks"
-	usage = `
-gmilinks - extracts the links from the supplied raw gemtext
+	desc  = "gmilinks - extracts the links from the supplied raw gemtext"
+	usage = `  gmilinks -f <file>,
 
-Usage:
-    gmilinks -f <file>, or pipe in via stdin:
-    gmiget gemini://some-url/ | gmilinks | fzf
-
-Options:
-    -h, --help     Show help for gmifmt
-    -f, --file     Format gemtext from file
-
-`
+  # Pipe in gemtext via stdin
+  gmiget gemini://some-url/ | gmilinks | fzf`
 )
 
 var (
@@ -33,12 +27,13 @@ var (
 func main() {
 	flag.BoolVar(&help, "help", false, "Show help for gmilinks")
 	flag.BoolVar(&help, "h", false, "Show help for gmilinks")
-	flag.StringVar(&inputFile, "file", "", "gemtext file to extract links from")
-	flag.StringVar(&inputFile, "f", "", "gemtext file to extract links from")
+	flag.StringVar(&inputFile, "file", "", "Gemtext file to extract links from")
+	flag.StringVar(&inputFile, "f", "", "Gemtext file to extract links from")
 
-	flag.Usage = func() {
-		fmt.Print(usage)
-	}
+	flag.Usage = cli.Usage(cli.UsageOptions{
+		Description: desc,
+		Usage:       usage,
+	}, os.Stdout)
 	flag.Parse()
 
 	if help {
