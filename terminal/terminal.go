@@ -1,7 +1,6 @@
 package terminal
 
 import (
-	"io/ioutil"
 	"os"
 	"syscall"
 
@@ -36,22 +35,28 @@ func getTTY() *os.File {
 	return in
 }
 
-var devPrefixes = [2]string{"/dev/pts/", "/dev/"}
-
 func ttyname() string {
 	var stderr syscall.Stat_t
 	if syscall.Fstat(2, &stderr) != nil {
 		return ""
 	}
 
-	for _, prefix := range devPrefixes {
-		files, err := ioutil.ReadDir(prefix)
+	devDirs := [2]string{"/dev/pts/", "/dev/"}
+
+	for _, prefix := range devDirs {
+		files, err := os.ReadDir(prefix)
 		if err != nil {
 			continue
 		}
 
 		for _, file := range files {
-			if stat, ok := file.Sys().(*syscall.Stat_t); ok && stat.Rdev == stderr.Rdev {
+			info, err := file.Info()
+			if err != nil {
+				// Caller checks length of return; we'll end up
+				// trying to use stdin if this happens
+				return ""
+			}
+			if stat, ok := info.Sys().(*syscall.Stat_t); ok && stat.Rdev == stderr.Rdev {
 				return prefix + file.Name()
 			}
 		}
