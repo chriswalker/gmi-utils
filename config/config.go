@@ -19,14 +19,17 @@ const (
 type Config map[string]string
 
 // Load attempts to load configuration files from a file. A file
-// spcified on the the command-line with '-c' or '--config' takes
+// specified on the the command-line with '-c' or '--config' takes
 // precedence, and after that we check the following:
 //
 //   $XDG_CONFIG_HOME/gemini/.gmifmtconf
 //   $HOME/.config/gemini/.gmifmtconf
 //   $HOME/.gmifmtconf
 func Load(file string) (*Config, error) {
-	filepaths := []string{file}
+	var filepaths []string
+	if file != "" {
+		filepaths = append(filepaths, file)
+	}
 
 	if val, ok := os.LookupEnv("XDG_CONFIG_HOME"); ok {
 		filepaths = append(filepaths, fmt.Sprintf("%s/%s/%s", val, configPath, defaultConfigFilename))
