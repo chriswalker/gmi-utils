@@ -44,8 +44,8 @@ func TestGetLineType(t *testing.T) {
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
 			got := getLineType(tc.isPreformatted, tc.line)
-			if tc.expected != got {
-				t.Errorf("expected %v, got %v", tc.expected, got)
+			if got != tc.expected{
+				t.Errorf("got %v, want %v", got, tc.expected)
 			}
 		})
 	}
@@ -77,12 +77,12 @@ func TestWrapLine(t *testing.T) {
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
 			got := wrap(availableWidth, tc.line)
-			if len(tc.wrappedLines) != len(got) {
-				t.Errorf("wrong number of wrapped lines returned; expected %d, got %d", len(tc.wrappedLines), len(got))
+			if len(got) != len(tc.wrappedLines) {
+				t.Errorf("wrong number of wrapped lines returned; got %d, want %d", len(got), len(tc.wrappedLines))
 			}
 			for i, line := range got {
-				if tc.wrappedLines[i] != line {
-					t.Errorf("line %d does not match; expected '%s', got '%s'", i, tc.wrappedLines[i], line)
+				if line != tc.wrappedLines[i]{
+					t.Errorf("line %d does not match; got '%s', want '%s'", i, line, tc.wrappedLines[i])
 				}
 			}
 		})
@@ -138,14 +138,14 @@ func TestNewBlock(t *testing.T) {
 			// When calling NewBlock, need to account for additional impacts to overall width
 			block := NewBlock(availableWidth, margin, tc.isPreformatted, tc.line)
 			if block.lineType != tc.expected.lineType {
-				t.Errorf("expected line type of '%v', got '%v'", block.lineType, tc.expected.lineType)
+				t.Errorf("got line type of '%v', want '%v'", block.lineType, tc.expected.lineType)
 			}
 			if len(block.lines) != len(tc.expected.lines) {
-				t.Errorf("expected %d parsed lines, got %d", len(tc.expected.lines), len(block.lines))
+				t.Errorf("got %d parsed lines, want %d", len(block.lines), len(tc.expected.lines))
 			}
 			for i, line := range block.lines {
 				if line != tc.expected.lines[i] {
-					t.Errorf("line %d does not match; expected '%s', got '%s'", i, tc.expected.lines[i], line)
+					t.Errorf("line %d does not match; got '%s', want '%s'", i, line, tc.expected.lines[i])
 				}
 			}
 		})
@@ -224,7 +224,7 @@ func TestBlockString(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			s := tc.block.String(margin)
 			if s != tc.expected {
-				t.Errorf("expected formatted string of '%s', got '%s'", tc.expected, s)
+				t.Errorf("got formatted string of '%s', want '%s'", s, tc.expected)
 			}
 		})
 	}
@@ -279,8 +279,8 @@ func TestOutput(t *testing.T) {
 				want = got.Bytes()
 			}
 
-			if !bytes.Equal(want, got.Bytes()) {
-				t.Errorf("expected '%s', got '%s'", want, got)
+			if !bytes.Equal(got.Bytes(), want) {
+				t.Errorf("got '%s', want '%s'", got, want)
 			}
 		})
 	}
@@ -302,14 +302,14 @@ func TestExtractLinks(t *testing.T) {
 
 	links := ExtractLinks(f)
 
-	for url, text := range expected {
-		var val string
-		val, ok := links[url]
+	for url, want := range expected {
+		var got string
+		got, ok := links[url]
 		if !ok {
 			t.Errorf("expected URL of '%s' not found", url)
 		}
-		if val != text {
-			t.Errorf("expected value of '%s' for URL '%s'; got '%s'", text, val, url)
+		if got != want {
+			t.Errorf("got value of '%s' for URL '%s', want '%s'", got , url, want)
 		}
 	}
 }

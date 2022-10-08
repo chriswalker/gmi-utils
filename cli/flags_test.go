@@ -74,8 +74,8 @@ func TestUsage(t *testing.T) {
 				want = got.Bytes()
 			}
 
-			if !bytes.Equal(want, got.Bytes()) {
-				t.Errorf("expected '%s', got '%s'", want, got)
+			if !bytes.Equal(got.Bytes(), want) {
+				t.Errorf("got '%s', want '%s'", got, want)
 			}
 		})
 	}

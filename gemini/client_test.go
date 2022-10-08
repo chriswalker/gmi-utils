@@ -39,7 +39,7 @@ func TestParseHeader(t *testing.T) {
 					t.Error("expected an error, but got nil")
 				}
 				if !strings.Contains(err.Error(), tc.errMsg) {
-					t.Errorf("expected error '%s', got '%s", tc.errMsg, err)
+					t.Errorf("got error '%s', want '%s", err, tc.errMsg)
 				}
 				return
 			}
@@ -47,11 +47,11 @@ func TestParseHeader(t *testing.T) {
 				t.Errorf("unexpected error: %q:", err)
 				return
 			}
-			if tc.status != status {
-				t.Errorf("expected status code of '%d', got '%d'", tc.status, status)
+			if status != tc.status {
+				t.Errorf("got status code of '%d', want '%d'", status, tc.status)
 			}
-			if tc.meta != meta {
-				t.Errorf("expected meta value of '%s', got '%s'", tc.meta, meta)
+			if meta != tc.meta{
+				t.Errorf("got meta value of '%s', want '%s'", meta, tc.meta)
 			}
 		})
 	}
@@ -74,7 +74,7 @@ func TestParseResponse(t *testing.T) {
 			meta:     "text/invalid",
 			body:     "",
 			expected: nil,
-			errMsg:   "unsupported MIME type",
+			errMsg:   "unsupported MIME type 'text/invalid'",
 		},
 	}
 
@@ -88,15 +88,15 @@ func TestParseResponse(t *testing.T) {
 					t.Error("expected an error, but got nil")
 				}
 				if !strings.Contains(err.Error(), tc.errMsg) {
-					t.Errorf("expected error '%s', got '%s", tc.errMsg, err)
+					t.Errorf("got error '%s', want '%s", err, tc.errMsg)
 				}
 				return
 			}
 			if err != nil {
 				t.Errorf("unexpected error: %q:", err)
 			}
-			if !bytes.Equal(tc.expected, b) {
-				t.Errorf("expected returned bytes of '%v', got '%v'", tc.expected, b)
+			if !bytes.Equal(b, tc.expected) {
+				t.Errorf("got returned bytes of '%v', want '%v'", b, tc.expected)
 			}
 		})
 	}
@@ -127,8 +127,8 @@ func TestBuildHostString(t *testing.T) {
 					t.Errorf("expected error '%s', got nil", tc.expectedErr)
 				}
 				if !strings.Contains(err.Error(), tc.expectedErr) {
-					t.Errorf("expected error of '%s', got '%s'",
-						tc.expectedErr, err)
+					t.Errorf("got error of '%s', want '%s'",
+						err, tc.expectedErr)
 				}
 				return
 			}
@@ -136,9 +136,9 @@ func TestBuildHostString(t *testing.T) {
 				t.Errorf("unexpected error: %q:", err)
 				return
 			}
-			if tc.expectedHost != host {
-				t.Errorf("expected host string of '%s', got '%s'\n",
-					tc.expectedHost, host)
+			if host != tc.expectedHost{
+				t.Errorf("got host string of '%s', want '%s'\n",
+					host, tc.expectedHost)
 			}
 		})
 	}
@@ -344,8 +344,8 @@ Followed by some body text
 					t.Errorf("expected error '%s', got nil", tc.expectedErr)
 				}
 				if !strings.Contains(err.Error(), tc.expectedErr) {
-					t.Errorf("expected error of '%s', got '%s'",
-						tc.expectedErr, err)
+					t.Errorf("got error of '%s', want '%s'",
+						err, tc.expectedErr)
 				}
 				return
 			}
@@ -353,17 +353,17 @@ Followed by some body text
 				t.Errorf("unexpected error: %q:", err)
 				return
 			}
-			if tc.expectedStatus != rsp.StatusCode {
-				t.Errorf("expected status code of %d, got %d",
-					tc.expectedStatus, rsp.StatusCode)
+			if rsp.StatusCode != tc.expectedStatus{
+				t.Errorf("got status code of %d, want %d",
+					rsp.StatusCode, tc.expectedStatus)
 			}
-			if tc.expectedMeta != rsp.Meta {
-				t.Errorf("expected meta of '%s', got '%s'",
-					tc.expectedMeta, rsp.Meta)
+			if rsp.Meta != tc.expectedMeta{
+				t.Errorf("got meta of '%s', want '%s'",
+					rsp.Meta, tc.expectedMeta)
 			}
-			if bytes.Equal([]byte(tc.expectedBody), rsp.Body) {
-				t.Errorf("expected body of '%s', got '%s'",
-					tc.expectedBody, string(rsp.Body))
+			if bytes.Equal(rsp.Body, []byte(tc.expectedBody)) {
+				t.Errorf("got body of '%s', want '%s'",
+					string(rsp.Body), tc.expectedBody)
 			}
 		})
 	}

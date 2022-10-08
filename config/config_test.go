@@ -8,17 +8,31 @@ import (
 	"github.com/chriswalker/gmi-utils/config"
 )
 
-func setup(xdgConfigHome, homeDir string) {
+func setup(xdgConfigHome, homeDir string) (home, xdg string) {
+	// Grab original values
+	home, _ = os.UserHomeDir()
+	xdg, _ = os.LookupEnv("XDG_CONFIG_HOME")
+	// If XDG_CONFIG_HOME was set, unset it; we might not be
+	// using it in the following tests
+	if xdg != "" {
+		os.Unsetenv("XDG_CONFIG_HOME")
+	}
 	if xdgConfigHome != "" {
 		os.Setenv("XDG_CONFIG_HOME", xdgConfigHome)
 	}
 	if homeDir != "" {
 		os.Setenv("HOME", homeDir)
 	}
+
+	return
 }
 
-func teardown(homeDir string) {
-	os.Unsetenv("XDG_CONFIG_HOME")
+func reset(homeDir, xdgDir string) {
+	if xdgDir != "" {
+		os.Setenv("XDG_CONFIG_HOME", xdgDir)
+	} else {
+		os.Unsetenv("XDG_CONFIG_HOME")
+	}
 	os.Setenv("HOME", homeDir)
 }
 
@@ -52,11 +66,10 @@ func TestLoad(t *testing.T) {
 		},
 	}
 
-	home, _ := os.UserHomeDir()
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-			setup(tc.xdgConfigHome, tc.homeDir)
-			defer teardown(home)
+			home, xdg := setup(tc.xdgConfigHome, tc.homeDir)
+			defer reset(home, xdg)
 
 			config, err := config.Load(tc.fileName)
 
@@ -65,7 +78,7 @@ func TestLoad(t *testing.T) {
 					t.Error("expected an error, but got nil")
 				}
 				if !strings.Contains(err.Error(), tc.errMsg) {
-					t.Errorf("expected error '%s', got '%s", tc.errMsg, err)
+					t.Errorf("got error '%s', want '%s", err, tc.errMsg)
 				}
 				return
 			}
@@ -73,8 +86,8 @@ func TestLoad(t *testing.T) {
 				t.Errorf("unexpected error: %q:", err)
 				return
 			}
-			if tc.expectedConfigLen > 0 && tc.expectedConfigLen != len(*config) {
-				t.Errorf("expected %d config items to have been parsed, got %d", tc.expectedConfigLen, len(*config))
+			if tc.expectedConfigLen > 0 && len(*config) != tc.expectedConfigLen {
+				t.Errorf("parsed %d config items, want %d", len(*config), tc.expectedConfigLen)
 			}
 		})
 	}
